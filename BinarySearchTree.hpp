@@ -507,20 +507,27 @@ private:
   // NOTE:    This function must be tree recursive.
   static bool check_sorting_invariant_impl(const Node *node, Compare less) {
 
-    if (!node) 
+    if(!node) 
     {
       return true; 
     }
-    else if (less(node->left, node->right))
+    else if(!node->left)
     {
-      return (check_sorting_invariant_impl(node->left, less) && check_sorting_invariant_impl(node->right, less));
+      return check_sorting_invariant_impl(node->right, less);
+    }
+    else if(!node->right)
+    {
+      return check_sorting_invariant_impl(node->left, less);
+    }
+    else if(less(node->left->datum, node->right->datum))
+    {
+      return check_sorting_invariant_impl(node->left, less) && 
+        check_sorting_invariant_impl(node->right, less);
     }
     else 
     {
       return false;
     }
-    
-
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using an in-order traversal,
@@ -566,28 +573,31 @@ private:
   // HINT: At each step, compare 'val' the the current node (using the
   //       'less' parameter). Based on the result, you gain some information
   //       about where the element you're looking for could be.
-  static Node * min_greater_than_impl(Node *node, const T &val, Compare less) {
-
-
-    // if(!node)
-    // {
-    //   return nullptr;
-    // }
-    // else if(less(val, node->datum)) //to the left
-    // {
-      
-    // }
-    // else if(less(node->datum, val)) //to the right
-    // {
-    //   return min_greater_than_impl(node->right, val, less);
-    // }
-    // else
-    // {
- 
-      
-    //   return min_element_impl(node->right);
-    // }
-    assert(false);
+  static Node * min_greater_than_impl(Node *node, const T &val, Compare less) 
+  {
+    if (node == nullptr)
+    {
+      return nullptr;
+    }
+    else
+    {
+      if (less(val, node->datum))
+      {
+        Node *retNode = min_greater_than_impl(node->left, val, less);
+        if (retNode == nullptr)
+        {
+          return node;
+        }
+        else
+        {
+          return retNode;
+        }
+      }
+      else
+      {
+        return min_greater_than_impl(node->right, val, less);
+      }
+    }
   }
 
 
