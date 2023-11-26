@@ -33,9 +33,9 @@ private:
   // A custom comparator
   class PairComp {
     public:
-      bool operator()(Pair_type p1, Pair_type p2)
+      bool operator()(const Pair_type p1, const Pair_type p2)
       {
-        return p1.first < p2.first;
+        return Key_compare()(p1.first, p2.first);
       }
   };
 
@@ -89,7 +89,7 @@ public:
   // HINT: Since Map is implemented using a BinarySearchTree that stores
   //       (key, value) pairs, you'll need to construct a dummy value
   //       using "Value_type()".
-  Iterator find(const Key_type& k) 
+  Iterator find(const Key_type& k) const
   {
     return tree.find({k, Value_type()});
   }
@@ -112,13 +112,14 @@ public:
   // HINT: http://www.cplusplus.com/reference/map/map/operator[]/
   Value_type& operator[](const Key_type& k)
   {
-    if(find(k) == end())
+    Iterator itor = find(k);
+    if(itor == end())
     {
-      return (tree.insert({k, Value_type}))->second;
+      return (tree.insert({k, Value_type()}))->second;
     }
     else
     {
-      return find(k)->second;
+      return itor->second;
     }
   }
 
@@ -132,9 +133,10 @@ public:
   //           the value true.
   std::pair<Iterator, bool> insert(const Pair_type &val) 
   {
-    if (tree.find(val) != tree.end()) 
+    Iterator itor = tree.find(val);
+    if (itor != tree.end()) 
     {
-      return {tree.find(val), false};
+      return {itor, false};
     }
     else 
     {
@@ -154,7 +156,7 @@ public:
   }
 
 private:
-  BinarySearchTree tree;
+  BinarySearchTree<Pair_type, PairComp> tree;
 };
 
 // You may implement member functions below using an "out-of-line" definition

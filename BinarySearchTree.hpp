@@ -412,11 +412,11 @@ private:
     }
     else if (less(query, node->datum))
     {
-      return find_impl(node->left);
+      return find_impl(node->left, query, less);
     }
     else if (less(node->datum, query))
     {
-      return find_impl(node->right);
+      return find_impl(node->right, query, less);
     }
     else 
     {
@@ -472,7 +472,7 @@ private:
     }
     else if (!node->left) 
     {
-      return node->datum;
+      return node;
     }
     else 
     {                           
@@ -492,7 +492,7 @@ private:
     } 
     else if (!node->right) 
     {
-      return node->datum;
+      return node;
     }
     else 
     {
@@ -513,7 +513,7 @@ private:
     }
     else if (less(node->left, node->right))
     {
-      return (check_sorting_invariant(node->left, less) && check_sorting_invariant(node->right, less));
+      return (check_sorting_invariant_impl(node->left, less) && check_sorting_invariant_impl(node->right, less));
     }
     else 
     {
@@ -569,25 +569,25 @@ private:
   static Node * min_greater_than_impl(Node *node, const T &val, Compare less) {
 
 
-    if(!node)
-    {
-      return nullptr;
-    }
-    else if(less(val, node->datum)) //to the left
-    {
+    // if(!node)
+    // {
+    //   return nullptr;
+    // }
+    // else if(less(val, node->datum)) //to the left
+    // {
       
-    }
-    else if(less(node->datum, val)) //to the right
-    {
-      return min_greater_than_impl(node->right, val, less);
-    }
-    else
-    {
+    // }
+    // else if(less(node->datum, val)) //to the right
+    // {
+    //   return min_greater_than_impl(node->right, val, less);
+    // }
+    // else
+    // {
  
       
-      return min_element_impl(node->right);
-    }
-
+    //   return min_element_impl(node->right);
+    // }
+    assert(false);
   }
 
 
