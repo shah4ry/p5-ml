@@ -507,27 +507,70 @@ private:
   // NOTE:    This function must be tree recursive.
   static bool check_sorting_invariant_impl(const Node *node, Compare less) {
 
-    if(!node) 
+    if(!node)
     {
-      return true; 
+      return true;
     }
-    else if(!node->left)
+
+    bool bRetLeft = false;
+    bool bRetRight = false;
+    if (!node->left)
     {
-      return check_sorting_invariant_impl(node->right, less);
+      bRetLeft = true;
     }
-    else if(!node->right)
+    else
     {
-      return check_sorting_invariant_impl(node->left, less);
+      Node *leftMax = max_element_impl(node->left);
+      if (less(leftMax->datum, node->datum))
+      {
+        bRetLeft = check_sorting_invariant_impl(node->left, less);
+      }
+      else
+      {
+        bRetLeft = false;
+      }
     }
-    else if(less(node->left->datum, node->right->datum))
+
+    if (!node->right)
     {
-      return check_sorting_invariant_impl(node->left, less) && 
-        check_sorting_invariant_impl(node->right, less);
+      bRetRight = true;
     }
-    else 
+    else
     {
-      return false;
+      Node *rightMin = min_element_impl(node->right);
+      if (less(node->datum, rightMin->datum))
+      {
+        bRetRight = check_sorting_invariant_impl(node->right, less);
+      }
+      else
+      {
+        bRetRight = false;
+      }
     }
+
+    return (bRetLeft && bRetRight);
+
+    // if(!node) 
+    // {
+    //   return true; 
+    // }
+    // else if(!node->left)
+    // {
+    //   return check_sorting_invariant_impl(node->right, less);
+    // }
+    // else if(!node->right)
+    // {
+    //   return check_sorting_invariant_impl(node->left, less);
+    // }
+    // else if(less(node->left->datum, node->right->datum))
+    // {
+    //   return check_sorting_invariant_impl(node->left, less) && 
+    //     check_sorting_invariant_impl(node->right, less);
+    // }
+    // else 
+    // {
+    //   return false;
+    // }
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using an in-order traversal,
